@@ -6,6 +6,10 @@ export const todo = pgTable("todo", {
   id: serial("id").primaryKey(),
   description: varchar("description").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const todoSelectSchema = createSelectSchema(todo, {
