@@ -1,9 +1,16 @@
 import { useNavigate } from "@solidjs/router";
-import { createSignal, Show } from "solid-js";
-import { authClient } from "~/lib/auth-client";
+import { createEffect, createSignal, Show } from "solid-js";
+import { authClient, useSession } from "~/lib/auth-client";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const session = useSession();
+
+  createEffect(() => {
+    if (session().data) {
+      navigate("/dashboard", { replace: true });
+    }
+  });
 
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
