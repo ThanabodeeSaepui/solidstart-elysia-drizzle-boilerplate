@@ -1,6 +1,6 @@
 import { openapi } from "@elysiajs/openapi";
 import { Elysia } from "elysia";
-import { todoRoute } from './todo';
+import { todoRoute } from "./controllers/todo";
 
 export const app = new Elysia({ prefix: "/api" })
   .use(openapi())

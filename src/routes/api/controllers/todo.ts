@@ -1,7 +1,11 @@
 import { eq } from "drizzle-orm";
 import { Elysia } from "elysia";
 import { db } from "~/database";
-import  { todo, todoDeleteSchema, todoInsertSchema }  from "~/database/schema/todos";
+import {
+  todo,
+  todoDeleteSchema,
+  todoInsertSchema,
+} from "~/database/schema/todos";
 
 export const todoRoute = new Elysia({ prefix: "/todo" })
   .get("", async () => await db.select().from(todo))

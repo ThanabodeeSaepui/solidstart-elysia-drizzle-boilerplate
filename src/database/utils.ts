@@ -4,7 +4,6 @@
  */
 
 import { Kind, type TObject } from "@sinclair/typebox";
-// import { table } from './schema'
 import type { Table } from "drizzle-orm";
 import {
   BuildSchema,
