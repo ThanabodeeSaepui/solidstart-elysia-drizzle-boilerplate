@@ -12,7 +12,7 @@ export const todoSelectSchema = createSelectSchema(todo, {
   description: t.String({ minLength: 1, default: "" }),
 });
 export type Todo = typeof todoSelectSchema.static;
-export const todoInsertSchema = t.Omit(todoSelectSchema, ["id"]);
+export const todoInsertSchema = t.Omit(todoSelectSchema, ["id", "createdAt"]);
 export const todoDeleteSchema = t.Pick(todoSelectSchema, ["id"]);
 
 export const { models: todoSchemas } = new Elysia().model({

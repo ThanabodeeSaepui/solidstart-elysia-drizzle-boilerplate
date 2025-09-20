@@ -1,32 +1,72 @@
-# SolidStart
+# SolidStart, Elysia, and Drizzle Boilerplate
 
-Everything you need to build a Solid project, powered by [`solid-start`](https://start.solidjs.com);
+This is a boilerplate project that combines SolidStart for the frontend, Elysia for the backend, and Drizzle ORM for database access.
 
-## Creating a project
+## Tech Stack
 
-```bash
-# create a new project in the current directory
-npm init solid@latest
+- **Framework**: [SolidStart](https://start.solidjs.com/)
+- **API**: [Elysia](https://elysiajs.com/)
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
+- **ORM**: [Drizzle](https://orm.drizzle.team/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Linting/Formatting**: [Biome](https://biomejs.dev/)
 
-# create a new project in my-app
-npm init solid@latest my-app
+## Getting Started
+
+### Prerequisites
+
+- [Bun](https://bun.sh/)
+- [Docker](https://www.docker.com/)
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/ThanabodeeSaepui/solidstart-elysia-drizzle-boilerplate
+   ```
+2. Install dependencies
+   ```sh
+   bun install
+   ```
+3. Start the database
+   ```sh
+   docker-compose up -d
+   ```
+4. Run the development server
+   ```sh
+   bun run dev
+   ```
+
+## Available Scripts
+
+- `bun run dev`: Starts the development server.
+- `bun run build`: Builds the application for production.
+- `bun run start`: Starts the production server.
+- `bun run push`: Pushes database schema changes.
+- `bun run format`: Formats the code.
+- `bun run lint`: Lints the code.
+
+## Project Structure
+
+```
+.
+├── src
+│   ├── components
+│   ├── database
+│   │   └── schema
+│   ├── routes
+│   │   └── api
+│   ├── app.css
+│   ├── app.tsx
+│   ├── entry-client.tsx
+│   ├── entry-server.tsx
+│   └── global.d.ts
+├── public
+├── drizzle.config.ts
+├── compose.yml
+└── package.json
 ```
 
-## Developing
+## License
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```bash
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-Solid apps are built with _presets_, which optimise your project for deployment to different environments.
-
-By default, `npm run build` will generate a Node app that you can run with `npm start`. To use a different preset, add it to the `devDependencies` in `package.json` and specify in your `app.config.js`.
-
-## This project was created with the [Solid CLI](https://github.com/solidjs-community/solid-cli)
+This project is licensed under the MIT License.

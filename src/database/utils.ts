@@ -4,14 +4,13 @@
  */
 
 import { Kind, type TObject } from "@sinclair/typebox";
-import {
-  createInsertSchema,
-  createSelectSchema,
-  BuildSchema,
-} from "drizzle-typebox";
-
 // import { table } from './schema'
 import type { Table } from "drizzle-orm";
+import {
+  BuildSchema,
+  createInsertSchema,
+  createSelectSchema,
+} from "drizzle-typebox";
 
 type Spread<
   T extends TObject | Table,
