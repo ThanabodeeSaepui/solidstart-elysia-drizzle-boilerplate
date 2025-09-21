@@ -5,7 +5,6 @@
       "name": "solidstart-elysia-drizzle-boilerplate",
       "dependencies": {
         "@elysiajs/eden": "^1.4.1",
-        "@elysiajs/openapi": "^1.4.5",
         "@solidjs/meta": "^0.29.4",
         "@solidjs/router": "0.15.3",
         "@solidjs/start": "1.2.0",
@@ -116,8 +115,6 @@
     "@drizzle-team/brocli": ["@drizzle-team/brocli@0.10.2", "", {}, "sha512-z33Il7l5dKjUgGULTqBsQBQwckHh5AbIuxhdsIxDDiZAzBOrZO6q9ogcWC65kU382AfynTfgNumVcNIjuIua6w=="],
 
     "@elysiajs/eden": ["@elysiajs/eden@1.4.1", "", { "peerDependencies": { "elysia": ">= 1.4.0-exp.0" } }, "sha512-9VXMau/cvafuBa1r19ucKi+l9eesCmeuvD6uYSeq5MFO/URc233JaxZmUlWQ8gztu+pp6L7auTZdkzOQz26O+A=="],
-
-    "@elysiajs/openapi": ["@elysiajs/openapi@1.4.5", "", { "peerDependencies": { "elysia": ">= 1.4.0" } }, "sha512-plvsxY59qW+RBMYBu+5idRc4RDzyYMe8p3rUFbc7vjjg9L4hQiHkwCm96jLD9mPyEnzZimClIAV2+16OvCDA6Q=="],
 
     "@esbuild-kit/core-utils": ["@esbuild-kit/core-utils@3.3.2", "", { "dependencies": { "esbuild": "~0.18.20", "source-map-support": "^0.5.21" } }, "sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ=="],
 
