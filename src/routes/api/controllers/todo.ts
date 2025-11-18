@@ -5,7 +5,6 @@ import {
   todo,
   todoDeleteSchema,
   todoInsertSchema,
-  todoUpdateSchema,
 } from "~/database/schema/todos";
 import { authMiddleware } from "~/lib/auth";
 

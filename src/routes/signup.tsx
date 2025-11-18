@@ -207,10 +207,10 @@ export default function SignupPage() {
 
           <button
             type="submit"
-            class="w-full rounded-lg font-medium py-3 px-6 transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 dark:focus:ring-sky-800 disabled:cursor-not-allowed disabled:opacity-50
-							   bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white
-							   dark:bg-sky-500 dark:hover:bg-sky-600 dark:active:bg-sky-700
-							   disabled:bg-slate-400 disabled:hover:bg-slate-400"
+            class={`w-full rounded-lg font-medium py-3 px-6 transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 dark:focus:ring-sky-800 disabled:cursor-not-allowed disabled:opacity-50
+ bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white
+ dark:bg-sky-500 dark:hover:bg-sky-600 dark:active:bg-sky-700
+ disabled:bg-slate-400 disabled:hover:bg-slate-400`}
             disabled={!canSubmit()}
           >
             {isSubmitting() ? "Creating account..." : "Sign Up"}

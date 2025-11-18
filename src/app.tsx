@@ -9,7 +9,7 @@ import "./app.css";
 
 export const { api } = treaty<App>("http://localhost:3000");
 
-export default function App() {
+export default function SolidStartApp() {
   return (
     <Router
       root={(props) => (

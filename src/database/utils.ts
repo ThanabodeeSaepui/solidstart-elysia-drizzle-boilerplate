@@ -6,7 +6,7 @@
 import { Kind, type TObject } from "@sinclair/typebox";
 import type { Table } from "drizzle-orm";
 import {
-  BuildSchema,
+  type BuildSchema,
   createInsertSchema,
   createSelectSchema,
 } from "drizzle-typebox";

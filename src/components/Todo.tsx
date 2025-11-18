@@ -28,6 +28,7 @@ export default function Todo(props: TodoProps) {
         </p>
       </div>
       <button
+        type="button"
         class="px-3 py-1.5 rounded-md text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-red-200 dark:focus:ring-red-800 disabled:cursor-not-allowed disabled:opacity-50
                bg-red-100 hover:bg-red-200 active:bg-red-300 text-red-700 border border-red-300
                dark:bg-red-900/20 dark:hover:bg-red-900/40 dark:active:bg-red-900/60 dark:text-red-400 dark:border-red-700
