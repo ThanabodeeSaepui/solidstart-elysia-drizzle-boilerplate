@@ -1,7 +1,7 @@
 import { createSignal, Show } from "solid-js";
-import { useSession } from "~/lib/auth-client";
 import TodoForm from "~/components/TodoForm";
 import TodoList from "~/components/TodoList";
+import { useSession } from "~/lib/auth-client";
 
 export default function DashboardPage() {
   const session = useSession();

@@ -1,4 +1,4 @@
-import { createSignal, Show, type Component } from "solid-js";
+import { type Component, createSignal, Show } from "solid-js";
 import { useSession } from "~/lib/auth-client";
 
 export interface TodoFormProps {

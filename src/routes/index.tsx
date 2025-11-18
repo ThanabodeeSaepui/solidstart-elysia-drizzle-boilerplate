@@ -3,7 +3,6 @@ import { A } from "@solidjs/router";
 import { createResource, createSignal, For, Show } from "solid-js";
 import { createStore } from "solid-js/store";
 import { api } from "~/app";
-import Counter from "~/components/Counter";
 import Todo from "~/components/Todo";
 import { todoInsertSchema } from "~/database/schema/todos";
 
@@ -49,12 +48,8 @@ export default function Home() {
     <main class="min-h-screen bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-4 transition-colors duration-200">
       <div class="max-w-2xl mx-auto">
         <h1 class="text-6xl font-thin uppercase my-16 text-center bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
-          Hello world!
+          Todos
         </h1>
-
-        <div class="mb-8">
-          <Counter />
-        </div>
 
         {/* Loading state */}
         <Show when={todos.loading}>

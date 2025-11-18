@@ -1,6 +1,6 @@
 import { type Accessor, createResource, For, Show } from "solid-js";
-import { useSession } from "~/lib/auth-client";
 import type { Todo as TodoType } from "~/database/schema/todos";
+import { useSession } from "~/lib/auth-client";
 import Todo from "./Todo";
 
 interface TodoListProps {
