@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from "@solidjs/router";
-import { Show, createEffect } from "solid-js";
+import { createEffect, Show } from "solid-js";
 import { authClient, useSession } from "~/lib/auth-client";
 
 export default function Nav() {
@@ -99,6 +99,7 @@ export default function Nav() {
                 class={`border-b-2 border-transparent mx-2 sm:mx-4 transition-all duration-200 rounded-t-md`}
               >
                 <button
+                  type="button"
                   onClick={handleLogout}
                   class="block px-4 py-2 font-medium transition-all duration-200 rounded-md text-slate-200 hover:border-sky-400 hover:text-white hover:bg-sky-700/30"
                 >

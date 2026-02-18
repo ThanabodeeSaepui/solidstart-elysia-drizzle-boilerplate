@@ -98,6 +98,7 @@ export default function Home() {
               }}
             />
             <button
+              type="button"
               class="px-6 py-2 rounded-lg font-medium transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 dark:focus:ring-sky-800 disabled:cursor-not-allowed disabled:opacity-50
                      bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white
                      dark:bg-sky-500 dark:hover:bg-sky-600 dark:active:bg-sky-700

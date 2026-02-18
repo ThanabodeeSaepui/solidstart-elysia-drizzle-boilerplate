@@ -4,10 +4,12 @@ import { Router } from "@solidjs/router";
 import { FileRoutes } from "@solidjs/start/router";
 import { Suspense } from "solid-js";
 import Nav from "~/components/Nav";
-import type { App } from "~/routes/api";
+import type { App as ApiApp } from "~/routes/api";
 import "./app.css";
 
-export const { api } = treaty<App>("http://localhost:3000");
+export const { api } = treaty<ApiApp>(
+  import.meta.env.VITE_SERVER_URL || "http://localhost:3000",
+);
 
 export default function App() {
   return (

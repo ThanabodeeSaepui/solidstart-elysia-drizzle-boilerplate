@@ -1,4 +1,4 @@
-import { Context, Elysia } from "elysia";
+import { type Context, Elysia } from "elysia";
 import { auth } from "~/lib/auth";
 
 const betterAuthView = (context: Context) => {

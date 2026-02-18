@@ -1,72 +1,98 @@
-import { and, eq } from "drizzle-orm";
 import { Elysia, t } from "elysia";
-import { db } from "~/database";
-import {
-  todo,
-  todoDeleteSchema,
-  todoInsertSchema,
-  todoUpdateSchema,
-} from "~/database/schema/todos";
+import { todoDeleteSchema, todoInsertSchema } from "~/database/schema/todos";
 import { authMiddleware } from "~/lib/auth";
+import { Errors } from "~/lib/errors";
+import { todoRepository } from "~/repositories/todo.repository";
 
-export const todoRoute = new Elysia({ prefix: "/todo" })
+export const todoRoute = new Elysia({ prefix: "/todo", tags: ["Todo"] })
   .use(authMiddleware)
+  // Get current user info
   .get("/user", ({ user }) => user, {
     auth: true,
+    detail: {
+      summary: "Get current user",
+      description: "Returns the currently authenticated user",
+    },
   })
   // Get all todos for the authenticated user
   .get(
     "",
     async ({ user }) => {
       if (!user) {
-        throw new Error("Unauthorized");
+        throw Errors.UNAUTHORIZED();
       }
-      return await db.select().from(todo).where(eq(todo.userId, user.id));
+      return await todoRepository.findByUserId(user.id);
     },
-    { auth: true },
+    {
+      auth: true,
+      detail: {
+        summary: "Get all todos",
+        description: "Returns all todos for the authenticated user",
+      },
+    },
   )
-
   // Create a new todo for the authenticated user
   .post(
     "",
     async ({ body, user }) => {
       if (!user) {
-        throw new Error("Unauthorized");
+        throw Errors.UNAUTHORIZED();
       }
-      return await db.insert(todo).values({
-        ...body,
-        userId: user.id, // Automatically set from authenticated user
+      return await todoRepository.create({
+        description: body.description,
+        userId: user.id,
       });
     },
     {
       body: todoInsertSchema,
       auth: true,
+      detail: {
+        summary: "Create a todo",
+        description: "Creates a new todo for the authenticated user",
+      },
     },
   )
+  // Get a specific todo by id
+  .get(
+    "/:id",
+    async ({ params, user }) => {
+      if (!user) {
+        throw Errors.UNAUTHORIZED();
+      }
 
-  // Update a todo (only if it belongs to the authenticated user)
+      const userTodo = await todoRepository.findById(params.id, user.id);
+
+      if (!userTodo) {
+        throw Errors.NOT_FOUND("Todo not found or unauthorized");
+      }
+
+      return userTodo;
+    },
+    {
+      params: todoDeleteSchema,
+      auth: true,
+      detail: {
+        summary: "Get a todo by ID",
+        description:
+          "Returns a specific todo if it belongs to the authenticated user",
+      },
+    },
+  )
+  // Update a todo
   .patch(
     "/:id",
     async ({ params, body, user }) => {
       if (!user) {
-        throw new Error("Unauthorized");
+        throw Errors.UNAUTHORIZED();
       }
 
-      // First check if the todo exists and belongs to the user
-      const existingTodo = await db
-        .select()
-        .from(todo)
-        .where(and(eq(todo.id, params.id), eq(todo.userId, user.id)))
-        .limit(1);
+      const existingTodo = await todoRepository.findById(params.id, user.id);
 
-      if (existingTodo.length === 0) {
-        throw new Error("Todo not found or unauthorized");
+      if (!existingTodo) {
+        throw Errors.NOT_FOUND("Todo not found or unauthorized");
       }
 
-      return await db
-        .update(todo)
-        .set(body)
-        .where(and(eq(todo.id, params.id), eq(todo.userId, user.id)));
+      return await todoRepository.update(params.id, user.id, body);
     },
     {
       params: todoDeleteSchema,
@@ -76,60 +102,34 @@ export const todoRoute = new Elysia({ prefix: "/todo" })
         }),
       ),
       auth: true,
+      detail: {
+        summary: "Update a todo",
+        description: "Updates a todo if it belongs to the authenticated user",
+      },
     },
   )
-
-  // Delete a todo (only if it belongs to the authenticated user)
+  // Delete a todo
   .delete(
     "/:id",
     async ({ params, user }) => {
       if (!user) {
-        throw new Error("Unauthorized");
+        throw Errors.UNAUTHORIZED();
       }
 
-      // First check if the todo exists and belongs to the user
-      const existingTodo = await db
-        .select()
-        .from(todo)
-        .where(and(eq(todo.id, params.id), eq(todo.userId, user.id)))
-        .limit(1);
+      const deleted = await todoRepository.delete(params.id, user.id);
 
-      if (existingTodo.length === 0) {
-        throw new Error("Todo not found or unauthorized");
+      if (!deleted) {
+        throw Errors.NOT_FOUND("Todo not found or unauthorized");
       }
 
-      return await db
-        .delete(todo)
-        .where(and(eq(todo.id, params.id), eq(todo.userId, user.id)));
+      return { success: true };
     },
     {
       params: todoDeleteSchema,
       auth: true,
-    },
-  )
-
-  // Get a specific todo by id (only if it belongs to the authenticated user)
-  .get(
-    "/:id",
-    async ({ params, user }) => {
-      if (!user) {
-        throw new Error("Unauthorized");
-      }
-
-      const userTodo = await db
-        .select()
-        .from(todo)
-        .where(and(eq(todo.id, params.id), eq(todo.userId, user.id)))
-        .limit(1);
-
-      if (userTodo.length === 0) {
-        throw new Error("Todo not found or unauthorized");
-      }
-
-      return userTodo[0];
-    },
-    {
-      params: todoDeleteSchema,
-      auth: true,
+      detail: {
+        summary: "Delete a todo",
+        description: "Deletes a todo if it belongs to the authenticated user",
+      },
     },
   );

@@ -3,13 +3,14 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import Elysia from "elysia";
 import { db } from "~/database";
 import * as schema from "~/database/schema/auth";
+import { env } from "./env";
 
 export const auth = betterAuth<BetterAuthOptions>({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema: schema,
   }),
-  trustedOrigins: [process.env.CORS_ORIGIN || ""],
+  trustedOrigins: [env.CORS_ORIGIN],
   emailAndPassword: {
     enabled: true,
   },

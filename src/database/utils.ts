@@ -6,7 +6,7 @@
 import { Kind, type TObject } from "@sinclair/typebox";
 import type { Table } from "drizzle-orm";
 import {
-  BuildSchema,
+  type BuildSchema,
   createInsertSchema,
   createSelectSchema,
 } from "drizzle-typebox";
@@ -14,17 +14,20 @@ import {
 type Spread<
   T extends TObject | Table,
   Mode extends "select" | "insert" | undefined,
-> = T extends TObject<infer Fields>
-  ? {
-      [K in keyof Fields]: Fields[K];
-    }
-  : T extends Table
-    ? Mode extends "select"
-      ? BuildSchema<"select", T["_"]["columns"], undefined>["properties"]
-      : Mode extends "insert"
-        ? BuildSchema<"insert", T["_"]["columns"], undefined>["properties"]
-        : {}
-    : {};
+> =
+  T extends TObject<infer Fields>
+    ? {
+        [K in keyof Fields]: Fields[K];
+      }
+    : T extends Table
+      ? Mode extends "select"
+        ? BuildSchema<"select", T["_"]["columns"], undefined>["properties"]
+        : Mode extends "insert"
+          ? BuildSchema<"insert", T["_"]["columns"], undefined>["properties"]
+          : // biome-ignore lint/complexity/noBannedTypes: Empty object type is intentional for fallback
+            {}
+      : // biome-ignore lint/complexity/noBannedTypes: Empty object type is intentional for fallback
+        {};
 
 /**
  * Spread a Drizzle schema into a plain object
@@ -37,6 +40,7 @@ export const spread = <
   mode?: Mode,
 ): Spread<T, Mode> => {
   const newSchema: Record<string, unknown> = {};
+  // biome-ignore lint/suspicious/noImplicitAnyLet: Type is determined dynamically
   let table;
 
   switch (mode) {
@@ -62,6 +66,7 @@ export const spread = <
   for (const key of Object.keys(table.properties))
     newSchema[key] = table.properties[key];
 
+  // biome-ignore lint/suspicious/noExplicitAny: Type assertion is necessary for generic return type
   return newSchema as any;
 };
 
@@ -86,5 +91,6 @@ export const spreads = <
 
   for (const key of keys) newSchema[key] = spread(models[key], mode);
 
+  // biome-ignore lint/suspicious/noExplicitAny: Type assertion is necessary for generic return type
   return newSchema as any;
 };
