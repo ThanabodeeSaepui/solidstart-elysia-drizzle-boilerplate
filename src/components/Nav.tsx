@@ -1,15 +1,13 @@
 import { useLocation, useNavigate } from "@solidjs/router";
-import { createEffect, Show } from "solid-js";
+import { Show } from "solid-js";
 import { authClient, useSession } from "~/lib/auth-client";
+import { useTheme } from "~/lib/theme";
 
 export default function Nav() {
   const location = useLocation();
   const session = useSession();
   const navigate = useNavigate();
-
-  createEffect(() => {
-    console.log("Session data changed:", session().data);
-  });
+  const { theme, toggleTheme } = useTheme();
 
   const active = (path: string) =>
     path === location.pathname
@@ -107,6 +105,16 @@ export default function Nav() {
                 </button>
               </li>
             </Show>
+            <li class="border-b-2 border-transparent mx-2 sm:mx-4 transition-all duration-200 rounded-t-md">
+              <button
+                type="button"
+                onClick={toggleTheme}
+                class="block px-4 py-2 font-medium transition-all duration-200 rounded-md text-slate-200 hover:border-sky-400 hover:text-white hover:bg-sky-700/30"
+                title="Toggle theme"
+              >
+                {theme() === "light" ? "🌙" : "☀️"}
+              </button>
+            </li>
           </ul>
         </div>
       </div>

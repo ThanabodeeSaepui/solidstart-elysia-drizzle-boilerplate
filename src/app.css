@@ -1,15 +1,14 @@
 @import "tailwindcss";
+@config "../tailwind.config.ts";
 
 :root {
   --background-rgb: 248, 250, 252;
   --foreground-rgb: 15, 23, 42;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-rgb: 15, 23, 42;
-    --foreground-rgb: 248, 250, 252;
-  }
+.dark {
+  --background-rgb: 15, 23, 42;
+  --foreground-rgb: 248, 250, 252;
 }
 
 body {
