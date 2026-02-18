@@ -5,6 +5,7 @@ import Todo from "./Todo";
 
 interface TodoListProps {
   refreshKey: Accessor<number>;
+  onRefresh?: () => void;
 }
 
 export default function TodoList(props: TodoListProps) {

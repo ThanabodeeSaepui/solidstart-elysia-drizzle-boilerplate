@@ -1,37 +1,26 @@
 import { createSignal, Show } from "solid-js";
+import FormInput from "~/components/FormInput";
 import { authClient } from "~/lib/auth-client";
+import {
+  validateEmail,
+  validateName,
+  validatePassword,
+} from "~/lib/validation";
 
-export default function SignUpForm({
-  onSwitchToSignIn,
-}: {
-  onSwitchToSignIn: () => void;
-}) {
+interface SignUpFormProps {
+  onSwitchToSignIn?: () => void;
+  onSuccess?: () => void;
+}
+
+export default function SignUpForm(props: SignUpFormProps) {
   const [name, setName] = createSignal("");
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
   const [nameError, setNameError] = createSignal("");
   const [emailError, setEmailError] = createSignal("");
   const [passwordError, setPasswordError] = createSignal("");
+  const [submitError, setSubmitError] = createSignal("");
   const [isSubmitting, setIsSubmitting] = createSignal(false);
-
-  const validateName = (value: string): string => {
-    if (!value) return "Name is required";
-    if (value.length < 2) return "Name must be at least 2 characters";
-    return "";
-  };
-
-  const validateEmail = (value: string): string => {
-    if (!value) return "Email is required";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) return "Invalid email address";
-    return "";
-  };
-
-  const validatePassword = (value: string): string => {
-    if (!value) return "Password is required";
-    if (value.length < 8) return "Password must be at least 8 characters";
-    return "";
-  };
 
   const handleNameBlur = () => {
     setNameError(validateName(name()));
@@ -43,6 +32,24 @@ export default function SignUpForm({
 
   const handlePasswordBlur = () => {
     setPasswordError(validatePassword(password()));
+  };
+
+  const handleNameInput = (value: string) => {
+    setName(value);
+    if (nameError()) setNameError("");
+    if (submitError()) setSubmitError("");
+  };
+
+  const handleEmailInput = (value: string) => {
+    setEmail(value);
+    if (emailError()) setEmailError("");
+    if (submitError()) setSubmitError("");
+  };
+
+  const handlePasswordInput = (value: string) => {
+    setPassword(value);
+    if (passwordError()) setPasswordError("");
+    if (submitError()) setSubmitError("");
   };
 
   const handleSubmit = async (e: Event) => {
@@ -64,6 +71,7 @@ export default function SignUpForm({
     }
 
     setIsSubmitting(true);
+    setSubmitError("");
 
     try {
       await authClient.signUp.email(
@@ -74,17 +82,19 @@ export default function SignUpForm({
         },
         {
           onSuccess: () => {
-            // Redirect to dashboard
-            window.location.href = "/dashboard";
-            console.log("Sign up successful");
+            if (props.onSuccess) {
+              props.onSuccess();
+            } else {
+              window.location.href = "/dashboard";
+            }
           },
           onError: (error) => {
-            console.error(error.error.message);
+            setSubmitError(error.error.message || "Failed to create account");
           },
         },
       );
-    } catch (error) {
-      console.error("Sign up error:", error);
+    } catch (_error) {
+      setSubmitError("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -103,94 +113,74 @@ export default function SignUpForm({
   };
 
   return (
-    <div class="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 class="mb-6 text-center text-3xl font-bold">Create Account</h1>
+    <div class="mx-auto w-full max-w-md p-6">
+      <h1 class="mb-6 text-center text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
+        Create Account
+      </h1>
 
       <form onSubmit={handleSubmit} class="space-y-4">
-        <div>
-          <div class="space-y-2">
-            <label for="name">Name</label>
-            <input
-              id="name"
-              name="name"
-              type="text"
-              value={name()}
-              onBlur={handleNameBlur}
-              onInput={(e) => {
-                setName(e.currentTarget.value);
-                // Clear error when user starts typing
-                if (nameError()) setNameError("");
-              }}
-              class="w-full rounded border p-2"
-            />
-            <Show when={nameError()}>
-              <p class="text-sm text-red-600">{nameError()}</p>
-            </Show>
+        <Show when={submitError()}>
+          <div class="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
+            {submitError()}
           </div>
-        </div>
+        </Show>
 
-        <div>
-          <div class="space-y-2">
-            <label for="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={email()}
-              onBlur={handleEmailBlur}
-              onInput={(e) => {
-                setEmail(e.currentTarget.value);
-                // Clear error when user starts typing
-                if (emailError()) setEmailError("");
-              }}
-              class="w-full rounded border p-2"
-            />
-            <Show when={emailError()}>
-              <p class="text-sm text-red-600">{emailError()}</p>
-            </Show>
-          </div>
-        </div>
+        <FormInput
+          id="name"
+          name="name"
+          type="text"
+          label="Name"
+          value={name()}
+          placeholder="Enter your full name"
+          error={nameError()}
+          onInput={handleNameInput}
+          onBlur={handleNameBlur}
+        />
 
-        <div>
-          <div class="space-y-2">
-            <label for="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password()}
-              onBlur={handlePasswordBlur}
-              onInput={(e) => {
-                setPassword(e.currentTarget.value);
-                // Clear error when user starts typing
-                if (passwordError()) setPasswordError("");
-              }}
-              class="w-full rounded border p-2"
-            />
-            <Show when={passwordError()}>
-              <p class="text-sm text-red-600">{passwordError()}</p>
-            </Show>
-          </div>
-        </div>
+        <FormInput
+          id="email"
+          name="email"
+          type="email"
+          label="Email"
+          value={email()}
+          placeholder="Enter your email"
+          error={emailError()}
+          onInput={handleEmailInput}
+          onBlur={handleEmailBlur}
+        />
+
+        <FormInput
+          id="password"
+          name="password"
+          type="password"
+          label="Password"
+          value={password()}
+          placeholder="Enter your password"
+          error={passwordError()}
+          onInput={handlePasswordInput}
+          onBlur={handlePasswordBlur}
+        />
 
         <button
           type="submit"
-          class="w-full rounded bg-indigo-600 p-2 text-white hover:bg-indigo-700 disabled:opacity-50"
+          class="w-full rounded-lg font-medium py-3 px-6 transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 dark:focus:ring-sky-800 disabled:cursor-not-allowed disabled:opacity-50 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white dark:bg-sky-500 dark:hover:bg-sky-600 dark:active:bg-sky-700 disabled:bg-slate-400 disabled:hover:bg-slate-400"
           disabled={!canSubmit()}
         >
-          {isSubmitting() ? "Submitting..." : "Sign Up"}
+          {isSubmitting() ? "Creating account..." : "Sign Up"}
         </button>
       </form>
 
-      <div class="mt-4 text-center">
-        <button
-          type="button"
-          onClick={onSwitchToSignIn}
-          class="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
-        >
-          Already have an account? Sign In
-        </button>
-      </div>
+      <Show when={props.onSwitchToSignIn}>
+        <div class="mt-6 text-center">
+          <button
+            type="button"
+            onClick={props.onSwitchToSignIn}
+            class="text-sm text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 hover:underline transition-colors font-medium"
+          >
+            Already have an account? Sign In
+          </button>
+        </div>
+      </Show>
     </div>
   );
 }

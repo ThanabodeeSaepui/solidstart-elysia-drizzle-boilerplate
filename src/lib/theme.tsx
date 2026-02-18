@@ -1,5 +1,12 @@
-import { type Accessor, createContext, createEffect, createSignal, onMount, useContext } from "solid-js";
 import type { JSX } from "solid-js";
+import {
+  type Accessor,
+  createContext,
+  createEffect,
+  createSignal,
+  onMount,
+  useContext,
+} from "solid-js";
 
 type Theme = "light" | "dark" | "system";
 
@@ -42,7 +49,8 @@ export function ThemeProvider(props: { children: JSX.Element }) {
   createEffect(() => {
     const root = document.documentElement;
     const currentTheme = theme();
-    const isDark = currentTheme === "dark" || (currentTheme === "system" && systemDark());
+    const isDark =
+      currentTheme === "dark" || (currentTheme === "system" && systemDark());
     root.classList.toggle("dark", isDark);
   });
 

@@ -1,29 +1,20 @@
 import { createSignal, Show } from "solid-js";
+import FormInput from "~/components/FormInput";
 import { authClient } from "~/lib/auth-client";
+import { validateEmail, validatePassword } from "~/lib/validation";
 
-export default function SignInForm({
-  onSwitchToSignUp,
-}: {
-  onSwitchToSignUp: () => void;
-}) {
+interface SignInFormProps {
+  onSwitchToSignUp?: () => void;
+  onSuccess?: () => void;
+}
+
+export default function SignInForm(props: SignInFormProps) {
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
   const [emailError, setEmailError] = createSignal("");
   const [passwordError, setPasswordError] = createSignal("");
+  const [submitError, setSubmitError] = createSignal("");
   const [isSubmitting, setIsSubmitting] = createSignal(false);
-
-  const validateEmail = (value: string): string => {
-    if (!value) return "Email is required";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(value)) return "Invalid email address";
-    return "";
-  };
-
-  const validatePassword = (value: string): string => {
-    if (!value) return "Password is required";
-    if (value.length < 8) return "Password must be at least 8 characters";
-    return "";
-  };
 
   const handleEmailBlur = () => {
     setEmailError(validateEmail(email()));
@@ -31,6 +22,18 @@ export default function SignInForm({
 
   const handlePasswordBlur = () => {
     setPasswordError(validatePassword(password()));
+  };
+
+  const handleEmailInput = (value: string) => {
+    setEmail(value);
+    if (emailError()) setEmailError("");
+    if (submitError()) setSubmitError("");
+  };
+
+  const handlePasswordInput = (value: string) => {
+    setPassword(value);
+    if (passwordError()) setPasswordError("");
+    if (submitError()) setSubmitError("");
   };
 
   const handleSubmit = async (e: Event) => {
@@ -50,6 +53,7 @@ export default function SignInForm({
     }
 
     setIsSubmitting(true);
+    setSubmitError("");
 
     try {
       await authClient.signIn.email(
@@ -59,17 +63,19 @@ export default function SignInForm({
         },
         {
           onSuccess: () => {
-            // Redirect to dashboard
-            window.location.href = "/dashboard";
-            console.log("Sign in successful");
+            if (props.onSuccess) {
+              props.onSuccess();
+            } else {
+              window.location.href = "/dashboard";
+            }
           },
           onError: (error) => {
-            console.error(error.error.message);
+            setSubmitError(error.error.message || "Failed to sign in");
           },
         },
       );
-    } catch (error) {
-      console.error("Sign in error:", error);
+    } catch (_error) {
+      setSubmitError("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -86,72 +92,62 @@ export default function SignInForm({
   };
 
   return (
-    <div class="mx-auto w-full mt-10 max-w-md p-6">
-      <h1 class="mb-6 text-center text-3xl font-bold">Welcome Back</h1>
+    <div class="mx-auto w-full max-w-md p-6">
+      <h1 class="mb-6 text-center text-3xl font-bold bg-gradient-to-r from-sky-600 to-blue-600 dark:from-sky-400 dark:to-blue-400 bg-clip-text text-transparent">
+        Welcome Back
+      </h1>
 
       <form onSubmit={handleSubmit} class="space-y-4">
-        <div>
-          <div class="space-y-2">
-            <label for="email">Email</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={email()}
-              onBlur={handleEmailBlur}
-              onInput={(e) => {
-                setEmail(e.currentTarget.value);
-                // Clear error when user starts typing
-                if (emailError()) setEmailError("");
-              }}
-              class="w-full rounded border p-2"
-            />
-            <Show when={emailError()}>
-              <p class="text-sm text-red-600">{emailError()}</p>
-            </Show>
+        <Show when={submitError()}>
+          <div class="bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-500 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg">
+            {submitError()}
           </div>
-        </div>
+        </Show>
 
-        <div>
-          <div class="space-y-2">
-            <label for="password">Password</label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={password()}
-              onBlur={handlePasswordBlur}
-              onInput={(e) => {
-                setPassword(e.currentTarget.value);
-                // Clear error when user starts typing
-                if (passwordError()) setPasswordError("");
-              }}
-              class="w-full rounded border p-2"
-            />
-            <Show when={passwordError()}>
-              <p class="text-sm text-red-600">{passwordError()}</p>
-            </Show>
-          </div>
-        </div>
+        <FormInput
+          id="email"
+          name="email"
+          type="email"
+          label="Email"
+          value={email()}
+          placeholder="Enter your email"
+          error={emailError()}
+          onInput={handleEmailInput}
+          onBlur={handleEmailBlur}
+        />
+
+        <FormInput
+          id="password"
+          name="password"
+          type="password"
+          label="Password"
+          value={password()}
+          placeholder="Enter your password"
+          error={passwordError()}
+          onInput={handlePasswordInput}
+          onBlur={handlePasswordBlur}
+        />
 
         <button
           type="submit"
-          class="w-full rounded bg-indigo-600 p-2 text-white hover:bg-indigo-700 disabled:opacity-50"
+          class="w-full rounded-lg font-medium py-3 px-6 transition-all focus:outline-none focus:ring-2 focus:ring-sky-200 dark:focus:ring-sky-800 disabled:cursor-not-allowed disabled:opacity-50 bg-sky-600 hover:bg-sky-700 active:bg-sky-800 text-white dark:bg-sky-500 dark:hover:bg-sky-600 dark:active:bg-sky-700 disabled:bg-slate-400 disabled:hover:bg-slate-400"
           disabled={!canSubmit()}
         >
-          {isSubmitting() ? "Submitting..." : "Sign In"}
+          {isSubmitting() ? "Signing in..." : "Sign In"}
         </button>
       </form>
 
-      <div class="mt-4 text-center">
-        <button
-          type="button"
-          onClick={onSwitchToSignUp}
-          class="text-sm text-indigo-600 hover:text-indigo-800 hover:underline"
-        >
-          Need an account? Sign Up
-        </button>
-      </div>
+      <Show when={props.onSwitchToSignUp}>
+        <div class="mt-6 text-center">
+          <button
+            type="button"
+            onClick={props.onSwitchToSignUp}
+            class="text-sm text-sky-600 dark:text-sky-400 hover:text-sky-700 dark:hover:text-sky-300 hover:underline transition-colors font-medium"
+          >
+            Need an account? Sign Up
+          </button>
+        </div>
+      </Show>
     </div>
   );
 }

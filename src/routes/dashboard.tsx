@@ -31,7 +31,10 @@ export default function DashboardPage() {
           <div class="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 border border-slate-200 dark:border-slate-700 text-center">
             <p class="text-slate-600 dark:text-slate-400">
               Please{" "}
-              <a href="/login" class="text-sky-600 hover:underline font-medium">
+              <a
+                href="/login"
+                class="text-sky-600 dark:text-sky-400 hover:underline font-medium"
+              >
                 log in
               </a>{" "}
               to manage your todos.
